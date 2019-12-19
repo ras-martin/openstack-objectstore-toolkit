@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+
 CMD=$1
-shift
 
 if [ -f "/openstack/openrc.sh" ]; then
     source /openstack/openrc.sh
