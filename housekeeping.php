@@ -48,7 +48,7 @@ $output = [];
 $returnStatus = null;
 
 $logger->debug($cmd);
-exec($cmd . '', $output, $returnStatus);
+exec($cmd, $output, $returnStatus);
 
 $logger->debug($returnStatus);
 $logger->debug(var_export($output, true));
@@ -96,7 +96,7 @@ $output = [];
 $returnStatus = null;
 
 $logger->debug($cmd);
-exec($cmd . '', $output, $returnStatus);
+exec($cmd, $output, $returnStatus);
 
 $logger->debug($returnStatus);
 $logger->debug(var_export($output, true));
@@ -161,7 +161,7 @@ if (DRY_RUN === false) {
             $returnStatus = null;
 
             $logger->debug($cmd);
-            exec($cmd . '', $output, $returnStatus);
+            exec($cmd, $output, $returnStatus);
 
             $logger->debug($returnStatus);
             $logger->debug(var_export($output, true));
