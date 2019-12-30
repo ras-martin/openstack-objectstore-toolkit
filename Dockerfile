@@ -16,7 +16,7 @@ WORKDIR /openstack
 
 COPY entrypoint.sh /entrypoint.sh
 COPY composer.json composer.json
-COPY housekeeping.php housekeeping.php
+COPY src src
 
 RUN composer install \
 	&& apt-get purge -y gcc \

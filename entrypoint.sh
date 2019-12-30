@@ -12,10 +12,10 @@ fi
 
 case ${CMD} in
 housekeeping*)
-  /usr/bin/php7.3 /openstack/housekeeping.php
+  /usr/bin/php7.3 /openstack/src/housekeeping.php
   ;;
 upload*)
-  /usr/bin/php7.3 /openstack/upload.php
+  /usr/bin/php7.3 /openstack/src/upload.php
   ;;
 *)
   exec "$@"
