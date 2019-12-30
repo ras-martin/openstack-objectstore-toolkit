@@ -1,15 +1,9 @@
 <?php
 
-require_once 'vendor/autoload.php';
+require_once 'common.php';
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+$logger = initLogger('housekeeping');
 
-$logger = new Logger('housekeeping');
-$logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
-
-define('OPENSTACK', '/usr/local/bin/openstack');
-define('OPENSTACK_CONTAINER_LIST', OPENSTACK . ' container list -f csv --quote all --long  2>&1');
 define('OPENSTACK_OBJECT_LIST', OPENSTACK . ' object list %1$s -f csv --quote all --long  2>&1');
 define('OPENSTACK_OBJECT_DELETE', OPENSTACK . ' object delete %1$s %2$s 2>&1');
 
@@ -43,50 +37,9 @@ $logger->info(sprintf('Dry run: %1$s', DRY_RUN ? 'on' : 'off'));
 /**
  * Check container exists
  */
-$cmd = OPENSTACK_CONTAINER_LIST;
-$output = [];
-$returnStatus = null;
-
-$logger->debug($cmd);
-exec($cmd, $output, $returnStatus);
-
-$logger->debug($returnStatus);
-$logger->debug(var_export($output, true));
-
-if ($returnStatus > 0) {
-    $logger->error(sprintf('Return status %1$d is not equals zero.', $returnStatus));
-    $logger->error(sprintf('Message: %1$s', array_pop($output)));
+if (!containerExists(CONTAINER, $logger)) {
     exit(1);
 }
-
-$containerFound = false;
-$firstOutputLine = true;
-foreach ($output as $container) {
-    $containerData = explode(',', $container);
-    array_walk($containerData, function (&$value) {
-        $value = trim($value, '"');
-    });
-
-    if ($firstOutputLine === true) {
-        if ($containerData[0] !== 'Name') {
-            $logger->error(sprintf('Expected first column to be \'Name\', but got \'%1$s\'', $objectData[0]));
-            exit(1);
-        }
-        $firstOutputLine = false;
-        continue;
-    }
-
-    if ($containerData[0] === CONTAINER) {
-        $containerFound = true;
-        break;
-    }
-}
-
-if ($containerFound === false) {
-    $logger->error(sprintf('No container with name \'%1$s\' found.', CONTAINER));
-    exit(1);
-}
-
 
 /**
  * List objects in container
