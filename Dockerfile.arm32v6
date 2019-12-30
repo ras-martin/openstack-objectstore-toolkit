@@ -1,8 +1,10 @@
-FROM python:slim
+FROM arm32v6/python:slim
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 ENV COMPOSER_CACHE_DIR /tmp/composer/cache
+
+COPY qemu-arm-static /usr/bin/
 
 RUN apt-get update \
 	&& apt-get install -y gcc \
