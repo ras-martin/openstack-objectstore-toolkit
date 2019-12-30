@@ -1,7 +1,14 @@
 #!/bin/bash
 
-docker build \
-    --file "${DOCKERFILE_PATH}" \
-    --build-arg BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-    --tag "$IMAGE_NAME" \
-    .
+source hooks/.config
+
+for arch in ${build_architectures[@]}; do
+    BASE_IMAGE_PREFIX="${base_image_prefix_map[${arch}]}"
+
+    docker build \
+        --build-arg BASE_IMAGE_PREFIX=${BASE_IMAGE_PREFIX} \
+        --build-arg ARCH=${docker_qemu_arch_map[${arch}]} \
+        --build-arg BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+        --tag "$IMAGE_NAME" \
+        .
+done

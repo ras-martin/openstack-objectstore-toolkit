@@ -1,8 +1,12 @@
-FROM amd64/python:slim
+ARG BASE_IMAGE_PREFIX
+FROM ${BASE_IMAGE_PREFIX}python:slim
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 ENV COMPOSER_CACHE_DIR /tmp/composer/cache
+
+ARG ARCH
+COPY qemu-${ARCH}-static /usr/bin
 
 RUN apt-get update \
 	&& apt-get install -y gcc \
