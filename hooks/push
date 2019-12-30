@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source hooks/.config
+
+for arch in ${build_architectures[@]}; do
+  docker push "${IMAGE_NAME}-${arch}"
+done
+
+manifests=""
+
+for arch in ${build_architectures[@]}; do
+  manifests="${manifests} ${IMAGE_NAME}-${arch}"
+done
+
+docker manifest create ${IMAGE_NAME} $manifests
+
+for arch in ${build_architectures[@]}; do
+    docker manifest annotate ${IMAGE_NAME} \
+    ${IMAGE_NAME}-${arch} \
+    --os linux \
+    --arch ${docker_to_manifest_map[${arch}]}
+done
+
+docker manifest push --purge docker manifest push --purge ${IMAGE_NAME}
