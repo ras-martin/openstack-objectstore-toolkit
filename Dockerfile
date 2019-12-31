@@ -14,6 +14,8 @@ RUN apt-get update \
 		composer \
 		git \
 		libffi-dev \
+		libssl-dev \
+		python-dev \
 	&& pip install --no-cache-dir python-openstackclient \
 	&& mkdir -p /openstack /data
 
