@@ -13,6 +13,7 @@ RUN apt-get update \
 		php7.3-cli \
 		composer \
 		git \
+		libffi-dev \
 	&& pip install --no-cache-dir python-openstackclient \
 	&& mkdir -p /openstack /data
 
