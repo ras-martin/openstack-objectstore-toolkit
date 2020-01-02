@@ -1,6 +1,17 @@
 # Openstack Object Store Toolkit
 
-This Docker-Image provides upload and housekeeping functionality for the Openstack Object Store. Primary it was made for [OVH Public Cloud - Object Store and Cloud Archive](https://www.ovh.de/public-cloud/cloud-archive/), which is used as a backup store.
+This Docker-Image provides upload and housekeeping functionality for the Openstack Object Store. Primary it was made for [OVH Public Cloud - Object Store and Cloud Archive](https://www.ovh.de/public-cloud/), which is used as a backup archive store.
+
+[![Docker Build](https://img.shields.io/docker/cloud/build/rasmartin/openstack-objectstore-toolkit)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit)
+[![Docker Automated](https://img.shields.io/docker/cloud/automated/rasmartin/openstack-objectstore-toolkit)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit)
+[![Docker Hub amd64](https://img.shields.io/badge/docker%20hub-amd64-blue)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit/tags)
+[![Docker Hub amd](https://img.shields.io/badge/docker%20hub-arm-blue)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit/tags)
+
+[![GitHub](https://img.shields.io/github/last-commit/ras-martin/openstack-objectstore-toolkit/master)](https://github.com/ras-martin/openstack-objectstore-toolkit)
+
+## Available Tags on Docker Hub
+* `latest`, `latest-amd64` for `amd64` (`x86_64`) architecture
+* `latest-arm` for `arm` (`arm32v7`, `armhf`) architecture (runs on Raspberry Pi)
 
 ## General
 
@@ -36,19 +47,23 @@ Upload all files (no subdirectories) of a directory to an given object store con
 
 Before the upload is done, the object store container will be checked if a given file already exists. After upload a MD5-check can be executed.
 
+### Run upload
+
+``docker run --rm -it -e CONTAINER=<my-container> -e MD5_CHECK=1 -v <path-to-openrc>/openrc.sh:/openstack/openrc.sh -v <path-to-archive-dir>:/data rasmartin/openstack-objectstore-toolkit:latest-<architecture> upload``
+
 ### Environment variables
 
 * `CONTAINER` (required): the name of the object container to operate on.
 * `MD5_CHECK` (optional, default `1`): executes a MD5 check after file upload.
-* `LOG_LEVEL` (optional, default `200`): Possible values are described [here](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels)
+* `LOG_LEVEL` (optional, default `200`): default value means log level info. Possible values are described [here](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels)
 
 ## Housekeeping
 
-Housekeeping selects old backups from object store and deletes them from there.
+Housekeeping looks for old backups in object store and deletes them from there.
 
 ### Run housekeeping
 
-``docker run --rm -it -e CONTAINER=<my-container> -e RETENTION_DAYS=7 -e DRY_RUN=1 -v `pwd`/openrc.sh:/openstack/openrc.sh my-openstackclient:latest housekeeping``
+``docker run --rm -it -e CONTAINER=<my-container> -e RETENTION_DAYS=7 -e DRY_RUN=1 -v <path-to-openrc>/openrc.sh:/openstack/openrc.sh rasmartin/openstack-objectstore-toolkit:latest-<architecture> housekeeping``
 
 ### Environment variables
 
