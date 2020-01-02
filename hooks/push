@@ -7,5 +7,6 @@ for arch in ${build_architectures[@]}; do
 
   if [ "${arch}" = "amd64" ]; then
     docker tag "${IMAGE_NAME}-${arch}" "${IMAGE_NAME}"
+    docker push "${IMAGE_NAME}"
   fi
 done
