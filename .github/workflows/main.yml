@@ -11,8 +11,8 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: rasmartin/openstack-objectstore-toolkit
       REGISTRY: ghcr.io
+      IMAGE_NAME: "${REGISTRY}/${{ github.repository_owner }}/openstack-objectstore-toolkit"
 
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
       - name: Prepare
         id: prepare
         run: |        
-          echo ::set-output name=docker_image::${REGISTRY}/${IMAGE_NAME}
+          echo ::set-output name=docker_image::${IMAGE_NAME}
           echo ::set-output name=version::${GITHUB_RUN_NUMBER}
 
       - name: Run Buildx
