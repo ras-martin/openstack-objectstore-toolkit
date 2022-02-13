@@ -16,9 +16,11 @@ jobs:
 
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@v2
 
       - name: Login to DockerHub
+        id: docker-login
         if: success()
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
@@ -33,9 +35,17 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
+      - name: Prepare
+        id: prepare
+        run: |        
+          echo ::set-output name=docker_image::${REGISTRY}/${IMAGE_NAME}
+          echo ::set-output name=version::${GITHUB_RUN_NUMBER}
+
       - name: Run Buildx
+        id: docker-build
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
-            --output "type=image,push=false" \
+            --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
+            --output "type=image,push=true" \
             --file ./Dockerfile .
