@@ -8,8 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  docker-build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: rasmartin/openstack-objectstore-toolkit
 
     steps:
       - uses: actions/checkout@v2
@@ -22,3 +24,4 @@ jobs:
       
       - name: Build
         run: /bin/bash -c hooks/build
+        
