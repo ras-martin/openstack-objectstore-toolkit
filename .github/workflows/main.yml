@@ -13,6 +13,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: "${REGISTRY}/${{ github.repository_owner }}/openstack-objectstore-toolkit"
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -45,7 +46,7 @@ jobs:
         id: docker-build
         run: |
           docker buildx build \
-            --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
+            --platform linux/amd64,linux/arm/v7,linux/arm64 \
             --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
             --output "type=image,push=true" \
             --file ./Dockerfile .
