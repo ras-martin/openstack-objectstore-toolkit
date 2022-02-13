@@ -10,7 +10,7 @@ COPY qemu-${ARCH}-static /usr/bin
 
 RUN apt-get update \
 	&& apt-get install -y gcc \
-		php7.3-cli \
+		php7.4-cli \
 		composer \
 		git \
 		libffi-dev \
