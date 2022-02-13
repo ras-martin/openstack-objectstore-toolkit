@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM python:slim
+FROM --platform=$TARGETPLATFORM python:slim
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -16,6 +16,7 @@ RUN apt-get update \
 		libffi-dev \
 		libssl-dev \
 		python-dev \
+	&& /usr/local/bin/python -m pip install --upgrade pip \
 	&& pip install --no-cache-dir python-openstackclient \
 	&& mkdir -p /openstack /data
 
