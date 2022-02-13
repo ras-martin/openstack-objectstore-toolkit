@@ -16,6 +16,8 @@ RUN apt-get update \
 		libffi-dev \
 		libssl-dev \
 		python-dev \
+		rustc \
+	&& /usr/local/bin/python -m pip install --upgrade pip \
 	&& pip install --no-cache-dir python-openstackclient \
 	&& mkdir -p /openstack /data
 
@@ -26,7 +28,7 @@ COPY composer.json composer.json
 COPY src src
 
 RUN composer install \
-	&& apt-get purge -y gcc \
+	&& apt-get purge -y gcc rustc \
 	&& apt-get autoremove -y \
 	&& apt-get clean \
 	&& rm -rf /tmp/composer*
