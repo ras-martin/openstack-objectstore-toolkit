@@ -12,16 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: rasmartin/openstack-objectstore-toolkit
+      REGISTRY: ghcr.io
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Post-Checkout
-        run: /bin/bash -c hooks/post_checkout
+      - name: Login to DockerHub
+        if: success()
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY}}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
-      - name: Pre-Build
-        run: /bin/bash -c hooks/pre_build
-      
-      - name: Build
-        run: /bin/bash -c hooks/build
-        
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      - name: Run Buildx
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
+            --output "type=image,push=false" \
+            --file ./Dockerfile
