@@ -4,8 +4,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 ENV COMPOSER_CACHE_DIR /tmp/composer/cache
 
-RUN apk update \
-	&& apk add composer git \
+RUN apk add --no-cache composer git \
 	&& mkdir -p /openstack /data
 
 WORKDIR /openstack
@@ -14,7 +13,6 @@ COPY composer.json composer.json
 COPY src src
 
 RUN composer install \
-	&& apk cache clear \
 	&& rm -rf /tmp/composer*
 
 
