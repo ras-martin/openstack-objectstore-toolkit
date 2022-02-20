@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM php:7.4.28-cli-alpine as build
+FROM --platform=$BUILDPLATFORM php:8-cli-alpine as build
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
@@ -14,7 +14,7 @@ COPY composer.json composer.json
 COPY src src
 
 RUN composer install \
-	&& apk cache clean \
+	&& apk cache clear \
 	&& rm -rf /tmp/composer*
 
 
