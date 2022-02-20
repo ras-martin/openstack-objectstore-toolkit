@@ -2,6 +2,8 @@ name: Docker Build
 on:
   push:
     branches: [ github-actions ]
+    tags:
+      - v*
   pull_request:
     branches: [ master ]
 
@@ -13,7 +15,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: "${REGISTRY}/${{ github.repository_owner }}/openstack-objectstore-toolkit"
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
@@ -38,9 +40,23 @@ jobs:
 
       - name: Prepare
         id: prepare
-        run: |        
+        run: |
+          VERSION=edge
+
+          if [[ $GITHUB_REF_NAME == master ]]; then
+            VERSION=latest
+          fi
+
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF_NAME}
+          fi
+
+          if [[ $GITHUB_REF == refs/heads/* ]]; then
+            VERSION=${GITHUB_REF_NAME}__${GITHUB_RUN_NUMBER}
+          fi
+
           echo ::set-output name=docker_image::${IMAGE_NAME}
-          echo ::set-output name=version::${GITHUB_RUN_NUMBER}
+          echo ::set-output name=version::${VERSION}
 
       - name: Run Buildx
         id: docker-build
