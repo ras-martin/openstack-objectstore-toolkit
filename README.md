@@ -1,17 +1,17 @@
 # Openstack Object Store Toolkit
 
-This Docker-Image provides upload and housekeeping functionality for the Openstack Object Store. Primary it was made for [OVH Public Cloud - Object Store and Cloud Archive](https://www.ovh.de/public-cloud/), which is used as a backup archive store.
+This Docker-Image provides upload and housekeeping functionality for the Openstack Object Store. Primary it was made for [OVH Public Cloud - Object Store and Cloud Archive](https://www.ovhcloud.com/de/public-cloud/), which is used as a backup archive store.
 
-[![Docker Build](https://img.shields.io/docker/cloud/build/rasmartin/openstack-objectstore-toolkit)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit)
-[![Docker Automated](https://img.shields.io/docker/cloud/automated/rasmartin/openstack-objectstore-toolkit)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit)
-[![Docker Hub amd64](https://img.shields.io/badge/docker%20hub-amd64-blue)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit/tags)
-[![Docker Hub amd](https://img.shields.io/badge/docker%20hub-arm-blue)](https://hub.docker.com/r/rasmartin/openstack-objectstore-toolkit/tags)
+[![GitHub Actions](https://github.com/ras-martin/openstack-objectstore-toolkit/actions/workflows/main.yml/badge.svg)](https://github.com/ras-martin/openstack-objectstore-toolkit)
 
 [![GitHub](https://img.shields.io/github/last-commit/ras-martin/openstack-objectstore-toolkit/master)](https://github.com/ras-martin/openstack-objectstore-toolkit)
 
-## Available Tags on Docker Hub
-* `latest`, `latest-amd64` for `amd64` (`x86_64`) architecture
-* `latest-arm` for `arm` (`arm32v7`, `armhf`) architecture (runs on Raspberry Pi)
+## Available Tags on GitHub Packages
+
+* `latest` for the latest version
+* `v<X>` for a specific version (see GitHub tags)
+
+All container images are available for platform _amd64_, _arm64_, _arm/v7_.
 
 ## General
 
@@ -56,6 +56,7 @@ Before the upload is done, the object store container will be checked if a given
 * `CONTAINER` (required): the name of the object container to operate on.
 * `MD5_CHECK` (optional, default `1`): executes a MD5 check after file upload.
 * `LOG_LEVEL` (optional, default `200`): default value means log level info. Possible values are described [here](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels)
+* `CHECK_CONTAINER_EXISTS` (optional, default `0`): if enabled, checks if the container exists in object store before an operation is performed
 
 ## Housekeeping
 
@@ -75,3 +76,4 @@ Which backups are selected for deletion can be controled by the following enviro
 * `DELETE_OLDER` (optional, default `0`): number of days that the helper should back in the past and delete backups, for example if `housekeeping` is not executed daily.
 * `DRY_RUN` (optional, default `0`): if enabled, the files for deletion will be selected, but no deletion will be executed.
 * `LOG_LEVEL` (optional, default `200`): Possible values are described [here](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels)
+* `CHECK_CONTAINER_EXISTS` (optional, default `0`): if enabled, checks if the container exists in object store before an operation is performed
