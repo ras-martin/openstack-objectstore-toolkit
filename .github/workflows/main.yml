@@ -44,7 +44,7 @@ jobs:
         run: |
           VERSION=edge
 
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF_NAME}
           fi
 
@@ -61,7 +61,7 @@ jobs:
 
       - name: Run Docker Build for Tag
         id: docker-build-tag
-        if: steps.prepare.outputs.version == v*
+        if: startsWith(steps.prepare.outputs.version, 'refs/tags/v') == true
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm/v7,linux/arm64 \
@@ -72,7 +72,7 @@ jobs:
 
       - name: Run Docker Build
         id: docker-build-common
-        if: steps.prepare.outputs.version != v*
+        if: startsWith(steps.prepare.outputs.version, 'refs/tags/v') != true
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm/v7,linux/arm64 \
