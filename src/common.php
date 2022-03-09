@@ -10,6 +10,7 @@ define('OPENSTACK_CONTAINER_LIST', OPENSTACK . ' container list -f csv --quote a
 define('OPENSTACK_OBJECT_SHOW', OPENSTACK . ' object show -f json %1$s %2$s 2>&1');
 
 define('LOG_LEVEL', getenv('LOG_LEVEL') ?: 200);
+define('CHECK_CONTAINER_EXISTS', (bool)getenv('CHECK_CONTAINER_EXISTS'));
 
 /**
  * @return Logger
@@ -28,6 +29,10 @@ function initLogger($name) {
 }
 
 function containerExists($container, Logger $logger) {
+    if (!CHECK_CONTAINER_EXISTS) {
+        return true;
+    }
+    
     $cmd = OPENSTACK_CONTAINER_LIST;
     $output = [];
     $returnStatus = null;

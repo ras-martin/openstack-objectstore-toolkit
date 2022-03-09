@@ -1,34 +1,43 @@
-ARG BASE_IMAGE_PREFIX
-FROM ${BASE_IMAGE_PREFIX}python:slim
+FROM --platform=$BUILDPLATFORM php:8-cli-alpine as build
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 ENV COMPOSER_CACHE_DIR /tmp/composer/cache
 
-ARG ARCH
-COPY qemu-${ARCH}-static /usr/bin
+RUN apk add --no-cache composer git \
+	&& mkdir -p /openstack /data
+
+WORKDIR /openstack
+
+COPY composer.json composer.json
+COPY src src
+
+RUN composer install \
+	&& rm -rf /tmp/composer*
+
+
+FROM --platform=$TARGETPLATFORM python:slim
+
+LABEL org.opencontainers.image.description Openstack Object Store Toolkit
 
 RUN apt-get update \
 	&& apt-get install -y gcc \
-		php7.3-cli \
-		composer \
-		git \
+		php7.4-cli \
+		php7.4-curl \
 		libffi-dev \
 		libssl-dev \
 		python-dev \
+		rustc \
+	&& /usr/local/bin/python -m pip install --upgrade pip \
 	&& pip install --no-cache-dir python-openstackclient \
+	&& apt-get purge -y gcc rustc \
+	&& apt-get autoremove -y \
+	&& apt-get clean \
 	&& mkdir -p /openstack /data
 
 WORKDIR /openstack
 
 COPY entrypoint.sh /entrypoint.sh
-COPY composer.json composer.json
-COPY src src
-
-RUN composer install \
-	&& apt-get purge -y gcc \
-	&& apt-get autoremove -y \
-	&& apt-get clean \
-	&& rm -rf /tmp/composer*
+COPY --from=build /openstack /openstack
 
 ENTRYPOINT [ "/entrypoint.sh" ]
