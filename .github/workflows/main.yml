@@ -60,7 +60,7 @@ jobs:
           echo ::set-output name=version::${VERSION}
 
       - name: Run Docker Build for Tag
-        id: docker-build
+        id: docker-build-tag
         if: steps.prepare.outputs.version == v*
         run: |
           docker buildx build \
@@ -71,7 +71,7 @@ jobs:
             --file ./Dockerfile .
 
       - name: Run Docker Build
-        id: docker-build
+        id: docker-build-common
         if: steps.prepare.outputs.version != v*
         run: |
           docker buildx build \
