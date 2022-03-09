@@ -1,10 +1,11 @@
 name: Docker Build
 on:
   push:
-    branches: [ master ]
+    branches: [ ]
     tags:
       - v*
   pull_request:
+    types: [ opened, synchronize ]
     branches: [ master ]
 
   workflow_dispatch:
@@ -43,10 +44,6 @@ jobs:
         run: |
           VERSION=edge
 
-          if [[ $GITHUB_REF_NAME == master ]]; then
-            VERSION=latest
-          fi
-
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF_NAME}
           fi
@@ -55,11 +52,27 @@ jobs:
             VERSION=${GITHUB_REF_NAME}__${GITHUB_RUN_NUMBER}
           fi
 
+          if [[ $GITHUB_REF == refs/pull/* ]]; then
+            VERSION=PR_${{ github.event.pull_request.number }}__${GITHUB_RUN_NUMBER}
+          fi
+
           echo ::set-output name=docker_image::${IMAGE_NAME}
           echo ::set-output name=version::${VERSION}
 
-      - name: Run Buildx
+      - name: Run Docker Build for Tag
         id: docker-build
+        if: steps.prepare.outputs.version == v*
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm/v7,linux/arm64 \
+            --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
+            --tag ${{ steps.prepare.outputs.docker_image }}:latest \
+            --output "type=image,push=true" \
+            --file ./Dockerfile .
+
+      - name: Run Docker Build
+        id: docker-build
+        if: steps.prepare.outputs.version != v*
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm/v7,linux/arm64 \
